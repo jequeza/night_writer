@@ -1,13 +1,45 @@
-handle = File.open(ARGV[0], "r")
+class NightWriter
+  attr_reader :file_in,
+              :file_out
 
-incoming_text = handle.read
+  def initialize
+    @file_in = ARGV[0]
+    @file_out = ARGV[1]
+  end
 
-handle.close
+  def orchestrate_conversion
+    read_file
+    write_file
+    puts display_message
+  end
 
-capitalized_text = incoming_text.upcase
+  def read_file
+    handle = File.open(ARGV[0], "r")
+    @incoming_text = handle.read
+    handle.close
+  end
 
-writer = File.open(ARGV[1], "w")
+  def convert
+    capitalized_text = @incoming_text.upcase
+  end
 
-writer.write(capitalized_text)
 
-writer.close
+  def write_file
+    writer = File.open(ARGV[1], "w")
+    writer.write(convert)
+    writer.close
+  end
+
+  def display_message
+    "Created #{@file_out} containing #{@incoming_text.length} characters."
+  end
+end
+
+
+
+
+
+
+
+
+
