@@ -1,10 +1,15 @@
+require "./lib/dictionary"
+require "./lib/braille_converter"
 class NightWriter
   attr_reader :file_in,
-              :file_out
+              :file_out,
+              :incoming_text
 
   def initialize
     @file_in = ARGV[0]
     @file_out = ARGV[1]
+    @dictionary = Dictionary.new
+    # @converter = BrailleConverter.new
   end
 
   def orchestrate_conversion
@@ -19,14 +24,38 @@ class NightWriter
     handle.close
   end
 
+  # def convert
+  #   @converter.convert
+  # end
+  #
+  # def simplify_conversion
+  #   @converter.simplify_conversion
+  # end
+
+  # def convert
+  #   converted_text = []
+  #   @incoming_text.chars.each do |char|
+  #     converted_text << @dictionary.braille_dictionary[char]
+  #   end
+  #   converted_text
+  # end
+
   def convert
-    capitalized_text = @incoming_text.upcase
+    converted_text = []
+    @incoming_text.chars.each do |char|
+      converted_text << @dictionary.braille_dictionary[char]
+    end
+    converted_text
+  end
+
+  def simplify_conversion
+    convert.transpose.flatten.join("\n")
   end
 
 
   def write_file
     writer = File.open(ARGV[1], "w")
-    writer.write(convert)
+    writer.write(simplify_conversion)
     writer.close
   end
 
