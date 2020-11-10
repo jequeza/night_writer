@@ -9,32 +9,38 @@ class NightWriter
     @file_in = ARGV[0]
     @file_out = ARGV[1]
     @dictionary = Dictionary.new
+    @character_count = 0
   end
 
   def orchestrate_conversion
-    read_file
-    write_file
+    until read_file.length == @character_count
+      read_file
+      write_file
+    end
     puts display_message
   end
 
   def read_file
     handle = File.open(@file_in, "r")
-    incoming_text = handle.read
-    handle.close
-    incoming_text
+    # incoming_tex = handle.read(38)
+    handle.read(38)
+    # handle.close
+    # incoming_text
+    handle.read
   end
 
   def convert
     converted_text = []
     read_file.chars.each do |char|
       converted_text << @dictionary.braille_dictionary[char]
+      @character_count += 1
     end
     converted_text.compact
   end
 
   def simplify_conversion
     transpose_matrix.flat_map do |row|
-       row.join
+      row.join
     end.join("\n")
   end
 
@@ -46,7 +52,8 @@ class NightWriter
   def write_file
     writer = File.open(@file_out, "w")
     writer.write(simplify_conversion)
-    writer.close
+    writer.write("\n")
+    # writer.close
   end
 
   def display_message
