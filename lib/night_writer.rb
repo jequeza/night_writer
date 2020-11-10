@@ -1,5 +1,5 @@
 require "./lib/dictionary"
-require "./lib/braille_converter"
+
 class NightWriter
   attr_reader :file_in,
               :file_out,
@@ -9,7 +9,6 @@ class NightWriter
     @file_in = ARGV[0]
     @file_out = ARGV[1]
     @dictionary = Dictionary.new
-    # @converter = BrailleConverter.new
   end
 
   def orchestrate_conversion
@@ -49,9 +48,13 @@ class NightWriter
   end
 
   def simplify_conversion
-    convert.transpose.flatten.join("\n")
+    transpose_output = convert.transpose
+    final_output = []
+    transpose_output.each do |row|
+      final_output << row.flatten.join
+    end
+    final_output.join("\n")
   end
-
 
   def write_file
     writer = File.open(ARGV[1], "w")
@@ -62,13 +65,5 @@ class NightWriter
   def display_message
     "Created #{@file_out} containing #{@incoming_text.length} characters."
   end
+
 end
-
-
-
-
-
-
-
-
-
