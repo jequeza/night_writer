@@ -19,30 +19,29 @@ class NightReader
 
   def read_file
     handle = File.open(@file_in, "r")
-    incoming_tex = handle.read
+    @incoming_text = handle.readlines(chomp: true)
     handle.close
-    incoming_tex
+    @incoming_text
+  end
+
+  def prepare_conversion
+    text_from_arr = []
+    text_for_conversoin = []
+    @incoming_text.map do |line|
+      element = line.slice!(0..1)
+      text_from_arr << element
+    end
+    text_for_conversoin << text_from_arr
+    text_for_conversoin
   end
 
   def convert
-    read_file.upcase
-    # converted_text = []
-    # read_file.chars.each do |char|
-    #   converted_text << @dictionary.english_dictionary[char]
-    # end
-    # converted_text.compact
+    converted_text = []
+    prepare_conversion.each do |line|
+      converted_text << @dictionary.english_dictionary[line]
+    end
+    converted_text.join
   end
-  #
-  # def simplify_conversion
-  #   transpose_matrix.flat_map do |row|
-  #     row.join
-  #   end.join("\n")
-  # end
-
-  # def transpose_matrix
-  #   transpose_output = convert.transpose
-  #   transpose_output
-  # end
 
   def write_file
     writer = File.open(@file_out, "w")
@@ -52,6 +51,6 @@ class NightReader
   end
 
   def display_message
-    "Created #{@file_out} containing #{read_file.length} characters."
+    "Created #{@file_out} containing #{read_file.join.length} characters."
   end
 end
