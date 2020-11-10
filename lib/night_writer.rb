@@ -21,6 +21,7 @@ class NightWriter
     handle = File.open(@file_in, "r")
     incoming_tex = handle.read
     handle.close
+    incoming_tex
   end
 
   def convert
