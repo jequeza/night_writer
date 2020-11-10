@@ -18,52 +18,39 @@ class NightWriter
   end
 
   def read_file
-    handle = File.open(ARGV[0], "r")
-    @incoming_text = handle.read
+    handle = File.open(@file_in, "r")
+    incoming_text = handle.read
     handle.close
+    incoming_text
   end
-
-  # def convert
-  #   @converter.convert
-  # end
-  #
-  # def simplify_conversion
-  #   @converter.simplify_conversion
-  # end
-
-  # def convert
-  #   converted_text = []
-  #   @incoming_text.chars.each do |char|
-  #     converted_text << @dictionary.braille_dictionary[char]
-  #   end
-  #   converted_text
-  # end
 
   def convert
     converted_text = []
-    @incoming_text.chars.each do |char|
+    read_file.chars.each do |char|
       converted_text << @dictionary.braille_dictionary[char]
     end
-    converted_text
+    converted_text.compact
   end
 
   def simplify_conversion
+    transpose_matrix.flat_map do |row|
+       row.join
+    end.join("\n")
+  end
+
+  def transpose_matrix
     transpose_output = convert.transpose
-    final_output = []
-    transpose_output.each do |row|
-      final_output << row.flatten.join
-    end
-    final_output.join("\n")
+    transpose_output
   end
 
   def write_file
-    writer = File.open(ARGV[1], "w")
+    writer = File.open(@file_out, "w")
     writer.write(simplify_conversion)
     writer.close
   end
 
   def display_message
-    "Created #{@file_out} containing #{@incoming_text.length} characters."
+    "Created #{@file_out} containing #{read_file.length} characters."
   end
 
 end
